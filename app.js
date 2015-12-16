@@ -1,6 +1,8 @@
 var http = require('http')
 var fs = require('fs')
 
+var count = 0;
+
 var server = http.createServer(function(req,res){
 	console.log("reaaching to create server");
 	fs.readFile(__dirname+ '/index.html',function(err,data){
@@ -16,9 +18,17 @@ console.log("Server running at http://127.0.0.1:3000");
 var io = require('socket.io').listen(server);
 
 io.sockets.on('connection',function(socket){
-	console.log("User connected");
+	count++;
+	console.log("User connected  " + count + ' user(s) present .');
+	socket.emit('users', {number : count });
+	socket.broadcast.emit('users ' , {number : count});
+
 
 socket.on('disconnect',function(){
-	console.log("User disconnedted");
+	count--;
+
+		console.log("User disconnedted " + count + ' user(s) present');
+		socket.broadcast.emit('users' , {number : count});
+		
 });
 });
