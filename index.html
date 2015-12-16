@@ -5,22 +5,45 @@
 <title> Socket IO Example </title>
 </head>
 <body>
-<h1> Socket.IO Example </h1>
+<h1> Chat Application </h1>
 
-<h2> How many users are here ? </h2>
+<div class="users">
+<h2> Number of users : </h2> 
 <p id="count"> </p>
+</div>
 
+<div class = "chat">
+	<form id="message-form" action="#" method="post">
+	<textarea id="message" rows="10" cols="50"> </textarea>
+	<input type="submit" value="Send Message ">
+
+	</form>
+
+</div>
 
 <script  src="/socket.io/socket.io.js"> </script>
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"> </script>
 <script type="text/javascript"> 
-var socket = io.connect('http://127.0.0.1:3000');
-var count = document.getElementById('count');
-socket.on('users' , function(data){
-	console.log("got UPdate from the server");
-	console.log("THere are " + data.number + " users");
+	var socket = io.connect('http://127.0.0.1:3000');
+	var count = document.getElementById('count');
+	var message = document.getElementById('message');
+
+	$(message.form).submit(function(){
+		socket.emit('message', {text : message.value});
+		return false;
+	});
+
+	socket.on('push message' , function(data){
+		$('form').after('<p>' + data.text + '</p>');
+	});
+
+
+	socket.on('users' , function(data){
+		console.log("got UPdate from the server");
+		console.log("THere are " + data.number + " users");
 
 	count.innerHTML = data.number
+
 
 }) ;
 </script>

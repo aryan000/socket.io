@@ -19,6 +19,10 @@ var io = require('socket.io').listen(server);
 
 io.sockets.on('connection',function(socket){
 	count++;
+	socket.on('message',function(data){
+		socket.broadcast.emit ('push message' , data);
+
+	});
 	console.log("User connected  " + count + ' user(s) present .');
 	socket.emit('users', {number : count });
 	socket.broadcast.emit('users ' , {number : count});
